@@ -1,1 +1,2 @@
 The screenshots proving that the infra is working.
+Step2 and 3 have the same validity test, so the screenshots are similar.
