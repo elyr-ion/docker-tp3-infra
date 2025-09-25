@@ -1,0 +1,120 @@
+1.
+Unable to find image 'ubuntu:24.04' locally
+24.04: Pulling from library/ubuntu
+953cdd413371: Pull complete
+Digest: sha256:353675e2a41babd526e2b837d7ec780c2a05bca0164f7ea5dbbd433d21d166fc
+Status: Downloaded newer image for ubuntu:24.04
+root@d642d672ab3a:/#
+
+2.
+La commande nano n'est pas reconnu, car le paquet n'est pas installé.
+
+3.
+root@d642d672ab3a:/# exit
+exit
+
+4.
+nano Dockerfile
+
+5.
+root@SRV-TMPL-DEBIAN13:/home/osadmin/docker-tp2# docker build -t ubuntu:24.04-nano .
+[+] Building 8.2s (6/6) FINISHED                                                                     docker:default
+ => [internal] load build definition from Dockerfile                                                           0.0s
+ => => transferring dockerfile: 137B                                                                           0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:24.04                                                0.0s
+ => [internal] load .dockerignore                                                                              0.0s
+ => => transferring context: 2B                                                                                0.0s
+ => [1/2] FROM docker.io/library/ubuntu:24.04                                                                  0.0s
+ => [2/2] RUN apt update &&     apt install -y nano &&     rm -rf /var/lib/apt/lists/*                         8.1s
+ => exporting to image                                                                                         0.0s
+ => => exporting layers                                                                                        0.0s
+ => => writing image sha256:00684ea60ea55a554fb1454590eb22e08fafe7cf03d6cadebd2cc7f5b80387c2                   0.0s
+ => => naming to docker.io/library/ubuntu:24.04-nano                                                           0.0s
+
+6.
+root@SRV-TMPL-DEBIAN13:/home/osadmin/docker-tp2# docker run -it --rm ubuntu:24.04-nano bash
+root@83aa427c999b:/#
+
+7.
+nano s'ouvre bien, car on a creer une image de ubuntu avec nano d'installé grace au dockerfile.
+
+8.
+root@83aa427c999b:/# root@83aa427c999b:/# exit
+exit
+
+9.
+nano Dockerfile
+
+10.
+Nous avons ecrasé li'mage precedement creer, en modifiant le default working directory de celui ci vers /app.
+
+11.
+Desormais, le default working directory du container est /app.
+
+12.
+nano Dockerfile
+
+13.
+On a ajouté une commande par default a executer (si aucune de preciser lors de l'appel de l'image)
+
+14.
+Sans preciser de commande (donc ici bash), la commande par default utilsie est nano index.html, le conteneur execute donc cette commande au demarage par default.
+
+15.
+ctrl-x
+
+16.
+nano index.html
+
+17.
+docker run -it -v "$(pwd)":/app --rm ubuntu:24.04-nano
+On a monté le repertoire local (contenant le fichier index.html) dans /app (le default working directory du container), donc desormais la commande nano index.html ouvre le ficheir precedement creer sur l'host.
+
+18.
+ctrl-x
+exit
+
+19.
+nano Dockerfile
+
+20.
+docker build -t nano:latest .
+
+21.
+docker run -it -v "$(pwd)":/app --rm nano:latest
+
+22.
+ctrl-o
+
+23.
+ctrl-x
+
+24.
+On a creer un fichier sur l'host depuis le container. Le ficheir contient bien le contenu que on a precedement fourni. 
+On voit bien avec ls le ficheir test.txt. 
+
+25.
+nano Dockerfile
+
+26.
+On rebuiold l'image en forunissant la command d'entree prioritaire (ici nano), et le parametre / command epar default a utiliser si aucun n'est specifier.
+root@SRV-TMPL-DEBIAN13:/home/osadmin/docker-tp2# docker build -t nano:latest .
+[+] Building 0.0s (7/7) FINISHED                                                                     docker:default
+ => [internal] load build definition from Dockerfile                                                           0.0s
+ => => transferring dockerfile: 147B                                                                           0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:24.04                                                0.0s
+ => [internal] load .dockerignore                                                                              0.0s
+ => => transferring context: 2B                                                                                0.0s
+ => [1/3] FROM docker.io/library/ubuntu:24.04                                                                  0.0s
+ => CACHED [2/3] RUN apt update && apt install -y nano                                                         0.0s
+ => CACHED [3/3] WORKDIR /app                                                                                  0.0s
+ => exporting to image                                                                                         0.0s
+ => => exporting layers                                                                                        0.0s
+ => => writing image sha256:f79527029b006e6b05c8051c5850fcc40654bcf2a170843747154aab8debac12                   0.0s
+ => => naming to docker.io/library/nano:latest                                                                 0.0s
+
+27.
+On ouvre bien le fichier index.html (present sur l'host) depuis le conteneur. (car index.html hardcoder dans le Dockerfile) et qu'on ne precise pas de commande quand on lance l'image.
+
+28.
+On ouvre bien le ficheir test.txt present sur l'host depuis le conteneur, car on le specifie dans l'execution de l'image.
