@@ -1,0 +1,503 @@
+1.
+[Gas@Arch ~]$ docker pull nginx
+Using default tag: latest
+latest: Pulling from library/nginx
+6c50e4e0c439: Pull complete
+f1c4d397f477: Pull complete
+d107e437f729: Pull complete
+cb497a329a81: Pull complete
+899c83fc198b: Pull complete
+f72106e86507: Pull complete
+a785b80f5a67: Pull complete
+Digest: sha256:d5f28ef21aabddd098f3dbc21fe5b7a7d7a184720bc07da0b6c9b9820e97f25e
+Status: Downloaded newer image for nginx:latest
+docker.io/library/nginx:latest
+
+2.
+[Gas@Arch ~]$ docker pull nginx:1.20
+1.20: Pulling from library/nginx
+e8750203e985: Pull complete
+d838e0361e8e: Pull complete
+fcc7a415e354: Pull complete
+50836501937f: Pull complete
+dc73b4533047: Pull complete
+214ca5fb9032: Pull complete
+Digest: sha256:38f8c1d9613f3f42e7969c3b1dd5c3277e635d4576713e6453c6193e66270a6d
+Status: Downloaded newer image for nginx:1.20
+docker.io/library/nginx:1.20
+
+3.
+[Gas@Arch ~]$ docker pull nginx:1.29
+1.29: Pulling from library/nginx
+Digest: sha256:d5f28ef21aabddd098f3dbc21fe5b7a7d7a184720bc07da0b6c9b9820e97f25e
+Status: Downloaded newer image for nginx:1.29
+docker.io/library/nginx:1.29
+
+4.
+[Gas@Arch ~]$ docker image ls
+REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+nginx        1.29      d5f28ef21aab   6 weeks ago   279MB
+nginx        latest    d5f28ef21aab   6 weeks ago   279MB
+nginx        1.20      38f8c1d9613f   3 years ago   213MB
+
+- Je constate que les images précedemment pull sont bien listés ici.
+
+5.
+[Gas@Arch ~]$ docker container run nginx:1.20
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2025/09/25 13:09:24 [notice] 1#1: using the "epoll" event method
+2025/09/25 13:09:24 [notice] 1#1: nginx/1.29.1
+2025/09/25 13:09:24 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14+deb12u1)
+2025/09/25 13:09:24 [notice] 1#1: OS: Linux 6.10.14-linuxkit
+2025/09/25 13:09:24 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2025/09/25 13:09:24 [notice] 1#1: start worker processes
+2025/09/25 13:09:24 [notice] 1#1: start worker process 29
+2025/09/25 13:09:24 [notice] 1#1: start worker process 30
+2025/09/25 13:09:24 [notice] 1#1: start worker process 31
+2025/09/25 13:09:24 [notice] 1#1: start worker process 32
+2025/09/25 13:09:24 [notice] 1#1: start worker process 33
+2025/09/25 13:09:24 [notice] 1#1: start worker process 34
+2025/09/25 13:09:24 [notice] 1#1: start worker process 35
+2025/09/25 13:09:24 [notice] 1#1: start worker process 36
+2025/09/25 13:09:24 [notice] 1#1: start worker process 37
+2025/09/25 13:09:24 [notice] 1#1: start worker process 38
+2025/09/25 13:09:24 [notice] 1#1: start worker process 39
+2025/09/25 13:09:24 [notice] 1#1: start worker process 40
+
+- La commande est effectivement bloquante.
+
+6.
+[Gas@Arch ~]$ docker container run -d --name http nginx:1.29
+26153d2ee201f763bdd6ffe05ef1a2ba30936197bee9f2f62547ba32f7ebdb1a
+
+7.
+[Gas@Arch ~]$ docker image rm nginx:1.20
+Untagged: nginx:1.20
+Deleted: sha256:38f8c1d9613f3f42e7969c3b1dd5c3277e635d4576713e6453c6193e66270a6d
+
+- l'image est bien supprimé
+
+8.
+[Gas@Arch ~]$ docker container rm busy_wright
+Error response from daemon: cannot remove container "busy_wright": container is running: stop the container before removing or force remove
+
+
+- le conteneur ne peut pas etre supprimer car il est toujours en cours d'exécution
+
+9.
+[Gas@Arch ~]$ docker container stop busy_wright
+busy_wright
+
+
+- docker renvoie le nom du conteneur, ici busy_wright
+
+10.
+[Gas@Arch ~]$ docker container rm busy_wright
+busy_wright
+
+- le conteneur est bien supprimé.
+
+11.
+[Gas@Arch ~]$ docker image rm nginx:1.20
+Error response from daemon: No such image: nginx:1.20
+
+- l'image ayant déjà été supprimé, docker retourne le message d'erreur ci-dessus.
+
+12.
+[Gas@Arch ~]$ docker container stop http
+http
+
+
+13.
+[Gas@Arch ~]$ docker container run -d --name http nginx:1.29
+docker: Error response from daemon: Conflict. The container name "/http" is already in use by container "2e4aa44eb22cb35dc4b68c74fa27bc0d61cafcb149329167ce0cd37f987c4993". You have to remove (or rename) that container to be able to reuse that name.
+
+- l'image ne peut pas etre créer car le conteneur http existe toujours.
+
+14.
+[Gas@Arch ~]$ docker container rm -f $(docker ps -aq)
+8e4c06f6a07e
+2e4aa44eb22c
+f6ddcb2145db
+
+
+15.
+[Gas@Arch ~]$ docker container run -d --name http -p 8081:80 nginx:1.29
+47d9908dd3f1c3bbbd8c56174c0cd30af9283a0048d4bf9e42fd321a25d82be0
+CONTAINER ID   IMAGE        COMMAND                  CREATED          STATUS          PORTS                                     NAMES
+47d9908dd3f1   nginx:1.29   "/docker-entrypoint.…"   18 seconds ago   Up 17 seconds   0.0.0.0:8081->80/tcp, [::]:8081->80/tcp   http
+
+16.
+- Je rentre http://localhost:8081 dans mon navigateur et j'atteris sur la page web nginx host en local.
+
+17.
+[Gas@Arch ~]$ docker container run -d --name http2 -p 8081:80 nginx:1.29
+045651e2fd5c9c7eeeb9d2a1fd0679f1bf5244d7964e090536b0be059432404f
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint http2 (8e6eadd95971382e3655cf521f8dabd8feeb864c803c88c76bb25020af89f581): Bind for 0.0.0.0:8081 failed: port is already allocated
+
+- Les ports choisi sont déjà attribué à la machine http créer précedemment. On peut soit choisir d'autres port pour http2 ou supprimer http et la remplacer par http2.
+
+18.
+- Pour consulter http2 en localhost je change le port de 8081 à 8082. Je peut ensuite consulter sur mon navigateur.
+
+19.
+[Gas@Arch ~]$ docker container logs http2
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2025/09/25 13:41:55 [notice] 1#1: using the "epoll" event method
+2025/09/25 13:41:55 [notice] 1#1: nginx/1.29.1
+2025/09/25 13:41:55 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14+deb12u1)
+2025/09/25 13:41:55 [notice] 1#1: OS: Linux 6.10.14-linuxkit
+2025/09/25 13:41:55 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2025/09/25 13:41:55 [notice] 1#1: start worker processes
+2025/09/25 13:41:55 [notice] 1#1: start worker process 29
+2025/09/25 13:41:55 [notice] 1#1: start worker process 30
+2025/09/25 13:41:55 [notice] 1#1: start worker process 31
+2025/09/25 13:41:55 [notice] 1#1: start worker process 32
+2025/09/25 13:41:55 [notice] 1#1: start worker process 33
+2025/09/25 13:41:55 [notice] 1#1: start worker process 34
+2025/09/25 13:41:55 [notice] 1#1: start worker process 35
+2025/09/25 13:41:55 [notice] 1#1: start worker process 36
+2025/09/25 13:41:55 [notice] 1#1: start worker process 37
+2025/09/25 13:41:55 [notice] 1#1: start worker process 38
+2025/09/25 13:41:55 [notice] 1#1: start worker process 39
+2025/09/25 13:41:55 [notice] 1#1: start worker process 40
+192.168.65.1 - - [25/Sep/2025:13:42:02 +0000] "GET / HTTP/1.1" 200 615 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+2025/09/25 13:42:02 [error] 29#29: *1 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 192.168.65.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8082", referrer: "http://localhost:8082/"
+192.168.65.1 - - [25/Sep/2025:13:42:02 +0000] "GET /favicon.ico HTTP/1.1" 404 153 "http://localhost:8082/" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+
+20.
+[Gas@Arch ~]$ docker container stop http2
+http2
+
+21.
+- Après avoir stoppé http2, la page web n'est plus accessible.
+
+22.
+[Gas@Arch ~]$ docker container start http2
+http2
+
+23.
+[Gas@Arch ~]$ mkdir html
+
+24, 25, 26, 27.
+[Gas@Arch ~]$ echo "<h1>Hello HTTP/3!</h1>" > ~/html/index.html
+bash: /home/Gas/html/index.html: Aucun fichier ou dossier de ce nom
+[Gas@Arch ~]$ mkdir -p ~/html
+echo "<h1>Hello HTTP/3!</h1>" > ~/html/index.html
+[Gas@Arch ~]$ docker container run -d --name http3 -p 8083:80 -v ~/html:/usr/share/nginx/html nginx:1.29
+b06c201ce42dda3d766be5b26b90284bc9810c66ec98ff4002b03615fc10697e
+
+- le navigateur affiche bien mon message "hello http3 !".
+
+28.
+[Gas@Arch ~]$ docker volume create http-src
+http-src
+
+29.
+[Gas@Arch ~]$ docker container run -d --name http4 -p 8084:80 -v http-src:/usr/share/nginx/html nginx:1.29
+f1a68df09c2d6497575675d94b7c16e08f189aabe1375c3388a77425009f70e8
+
+30.
+- le navigateur affiche bien la page nginx
+
+31.
+[Gas@Arch ~]$ docker container cp ~/html/index.html http4:/usr/share/nginx/html/index.html
+Successfully copied 2.05kB to http4:/usr/share/nginx/html/index.html
+
+32.
+- le nvigateur web affiche le message "hello http3 !" comme sur http3
+
+33.
+[Gas@Arch ~]$ docker container run -d --name http5 -p 8085:80 -v http-src:/usr/share/nginx/html nginx:1.29
+ad096fd6afceaf1d28c5c5c9b45f5c6a93aaaa4cb806c57f100c3e04334be1ff
+
+34.
+- le message "Hello HTTP3 !" est affiché comme sur http3 et 4.
+
+35.
+[Gas@Arch ~]$ docker network create monreseau
+542b7fe20d3432a85dc4a8df6e72d6751a5535950c809162bc1b14f04389302b
+
+36.
+[Gas@Arch ~]$ docker network connect monreseau http5
+[Gas@Arch ~]$
+
+37.
+[Gas@Arch ~]$ mkdir -p ~/docker
+cd ~/docker
+[Gas@Arch docker]$ cd
+[Gas@Arch ~]$ mv ~/html ~/docker/html
+[Gas@Arch ~]$ mkdir ~/docker/config
+
+38.
+[Gas@Arch ~]$ docker container cp http5:/etc/nginx/conf.d/default.conf ~/docker/config
+Successfully copied 3.07kB to /home/Gas/docker/config
+
+39.
+server {
+    listen       80;
+    listen  [::]:80;
+    server_name  localhost;
+
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+    #
+    #location ~ \.php$ {
+    #    proxy_pass   http://127.0.0.1;
+    #}
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    #location ~ \.php$ {
+    #    root           html;
+    #    fastcgi_pass   127.0.0.1:9000;
+    #    fastcgi_index  index.php;
+    #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+    #    include        fastcgi_params;
+    #}
+
+    # deny access to .htaccess files, if Apache's document root
+    # concurs with nginx's one
+    #
+    #location ~ /\.ht {
+    #    deny  all;
+    #}
+}
+
+
+40.
+[Gas@Arch ~]$ docker container run -d --name http6 -p 8086:80 -v ~/docker/config/default.conf:/etc/nginx/conf.d/default.conf  --network monreseau nginx:1.29
+480856ad5fc455b63cbbbd318a8e40a9bf65779f2b504ef5384a72cf3e0d3a69
+
+41.
+- le message d'erreur 404 est affiché.
+
+42.
+[Gas@Arch ~]$ docker container run -d --name http7 -p 8087:80 -v http-src:/usr/share/nginx/html --network monreseau nginx:1.29
+9340735558f59a9aa1a6767239b0a22e6a188fef1c0faed9f49c532d08ec7b72
+
+43.
+server {
+    listen       80;
+    listen  [::]:80;
+    server_name  localhost;
+
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+    #
+    #location ~ \.php$ {
+       proxy_pass   http://128.0.0.1;
+    #}
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    #location ~ \.php$ {
+    #    root           html;
+    #    fastcgi_pass   127.0.0.1:9000;
+    #    fastcgi_index  index.php;
+    #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+    #    include        fastcgi_params;
+    #}
+
+    # deny access to .htaccess files, if Apache's document root
+    # concurs with nginx's one
+    #
+    #location ~ /\.ht {
+    #    deny  all;
+    #}
+}
+
+44.
+[Gas@Arch ~]$ docker container run -d --name http8 -p 8088:80 \
+-v ~/docker/config/default.conf:/etc/nginx/conf.d/default.conf --network monreseau nginx:1.29
+cb49a978ddcd5173f5c818cf898fddea8d686da6eb6adbca69fc48a276ec1a69
+
+45.
+- [Gas@Arch ~]$ docker container logs http5 --follow
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2025/09/25 14:07:35 [notice] 1#1: using the "epoll" event method
+2025/09/25 14:07:35 [notice] 1#1: nginx/1.29.1
+2025/09/25 14:07:35 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14+deb12u1)
+2025/09/25 14:07:35 [notice] 1#1: OS: Linux 6.10.14-linuxkit
+2025/09/25 14:07:35 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2025/09/25 14:07:35 [notice] 1#1: start worker processes
+2025/09/25 14:07:35 [notice] 1#1: start worker process 29
+2025/09/25 14:07:35 [notice] 1#1: start worker process 30
+2025/09/25 14:07:35 [notice] 1#1: start worker process 31
+2025/09/25 14:07:35 [notice] 1#1: start worker process 32
+2025/09/25 14:07:35 [notice] 1#1: start worker process 33
+2025/09/25 14:07:35 [notice] 1#1: start worker process 34
+2025/09/25 14:07:35 [notice] 1#1: start worker process 35
+2025/09/25 14:07:35 [notice] 1#1: start worker process 36
+2025/09/25 14:07:35 [notice] 1#1: start worker process 37
+2025/09/25 14:07:35 [notice] 1#1: start worker process 38
+2025/09/25 14:07:35 [notice] 1#1: start worker process 39
+2025/09/25 14:07:35 [notice] 1#1: start worker process 40
+192.168.65.1 - - [25/Sep/2025:14:08:16 +0000] "GET / HTTP/1.1" 200 23 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+2025/09/25 14:08:16 [error] 29#29: *1 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 192.168.65.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8085", referrer: "http://localhost:8085/"
+192.168.65.1 - - [25/Sep/2025:14:08:16 +0000] "GET /favicon.ico HTTP/1.1" 404 153 "http://localhost:8085/" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+192.168.65.1 - - [25/Sep/2025:14:31:03 +0000] "GET / HTTP/1.1" 200 23 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+2025/09/25 14:31:03 [error] 31#31: *2 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 192.168.65.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8085", referrer: "http://localhost:8085/"
+192.168.65.1 - - [25/Sep/2025:14:31:03 +0000] "GET /favicon.ico HTTP/1.1" 404 153 "http://localhost:8085/" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+
+[Gas@Arch ~]$ docker container logs http6 --follow
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: IPv6 listen already enabled
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2025/09/25 14:22:29 [notice] 1#1: using the "epoll" event method
+2025/09/25 14:22:29 [notice] 1#1: nginx/1.29.1
+2025/09/25 14:22:29 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14+deb12u1)
+2025/09/25 14:22:29 [notice] 1#1: OS: Linux 6.10.14-linuxkit
+2025/09/25 14:22:29 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2025/09/25 14:22:29 [notice] 1#1: start worker processes
+2025/09/25 14:22:29 [notice] 1#1: start worker process 22
+2025/09/25 14:22:29 [notice] 1#1: start worker process 23
+2025/09/25 14:22:29 [notice] 1#1: start worker process 24
+2025/09/25 14:22:29 [notice] 1#1: start worker process 25
+2025/09/25 14:22:29 [notice] 1#1: start worker process 26
+2025/09/25 14:22:29 [notice] 1#1: start worker process 27
+2025/09/25 14:22:29 [notice] 1#1: start worker process 28
+2025/09/25 14:22:29 [notice] 1#1: start worker process 29
+2025/09/25 14:22:29 [notice] 1#1: start worker process 30
+2025/09/25 14:22:29 [notice] 1#1: start worker process 31
+2025/09/25 14:22:29 [notice] 1#1: start worker process 32
+2025/09/25 14:22:29 [notice] 1#1: start worker process 33
+192.168.65.1 - - [25/Sep/2025:14:23:20 +0000] "GET / HTTP/1.1" 404 153 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+2025/09/25 14:23:20 [error] 22#22: *1 "/etc/nginx/html/index.html" is not found (2: No such file or directory), client: 192.168.65.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8086"
+192.168.65.1 - - [25/Sep/2025:14:23:20 +0000] "GET /favicon.ico HTTP/1.1" 404 153 "http://localhost:8086/" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+2025/09/25 14:23:20 [error] 22#22: *1 open() "/etc/nginx/html/favicon.ico" failed (2: No such file or directory), client: 192.168.65.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8086", referrer: "http://localhost:8086/"
+192.168.65.1 - - [25/Sep/2025:14:31:09 +0000] "GET / HTTP/1.1" 404 153 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+2025/09/25 14:31:09 [error] 24#24: *2 "/etc/nginx/html/index.html" is not found (2: No such file or directory), client: 192.168.65.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8086"
+192.168.65.1 - - [25/Sep/2025:14:31:09 +0000] "GET /favicon.ico HTTP/1.1" 404 153 "http://localhost:8086/" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+2025/09/25 14:31:09 [error] 24#24: *2 open() "/etc/nginx/html/favicon.ico" failed (2: No such file or directory), client: 192.168.65.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8086", referrer: "http://localhost:8086/"
+
+[Gas@Arch ~]$ docker container logs http7 --follow
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2025/09/25 14:26:00 [notice] 1#1: using the "epoll" event method
+2025/09/25 14:26:00 [notice] 1#1: nginx/1.29.1
+2025/09/25 14:26:00 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14+deb12u1)
+2025/09/25 14:26:00 [notice] 1#1: OS: Linux 6.10.14-linuxkit
+2025/09/25 14:26:00 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2025/09/25 14:26:00 [notice] 1#1: start worker processes
+2025/09/25 14:26:00 [notice] 1#1: start worker process 29
+2025/09/25 14:26:00 [notice] 1#1: start worker process 30
+2025/09/25 14:26:00 [notice] 1#1: start worker process 31
+2025/09/25 14:26:00 [notice] 1#1: start worker process 32
+2025/09/25 14:26:00 [notice] 1#1: start worker process 33
+2025/09/25 14:26:00 [notice] 1#1: start worker process 34
+2025/09/25 14:26:00 [notice] 1#1: start worker process 35
+2025/09/25 14:26:00 [notice] 1#1: start worker process 36
+2025/09/25 14:26:00 [notice] 1#1: start worker process 37
+2025/09/25 14:26:00 [notice] 1#1: start worker process 38
+2025/09/25 14:26:00 [notice] 1#1: start worker process 39
+2025/09/25 14:26:00 [notice] 1#1: start worker process 40
+192.168.65.1 - - [25/Sep/2025:14:31:15 +0000] "GET / HTTP/1.1" 200 23 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+192.168.65.1 - - [25/Sep/2025:14:31:15 +0000] "GET /favicon.ico HTTP/1.1" 404 153 "http://localhost:8087/" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+2025/09/25 14:31:15 [error] 29#29: *1 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 192.168.65.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8087", referrer: "http://localhost:8087/"
+
+[Gas@Arch ~]$ docker container logs http8 --follow
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: IPv6 listen already enabled
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2025/09/25 14:30:20 [notice] 1#1: using the "epoll" event method
+2025/09/25 14:30:20 [notice] 1#1: nginx/1.29.1
+2025/09/25 14:30:20 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14+deb12u1)
+2025/09/25 14:30:20 [notice] 1#1: OS: Linux 6.10.14-linuxkit
+2025/09/25 14:30:20 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2025/09/25 14:30:20 [notice] 1#1: start worker processes
+2025/09/25 14:30:20 [notice] 1#1: start worker process 22
+2025/09/25 14:30:20 [notice] 1#1: start worker process 23
+2025/09/25 14:30:20 [notice] 1#1: start worker process 24
+2025/09/25 14:30:20 [notice] 1#1: start worker process 25
+2025/09/25 14:30:20 [notice] 1#1: start worker process 26
+2025/09/25 14:30:20 [notice] 1#1: start worker process 27
+2025/09/25 14:30:20 [notice] 1#1: start worker process 28
+2025/09/25 14:30:20 [notice] 1#1: start worker process 29
+2025/09/25 14:30:20 [notice] 1#1: start worker process 30
+2025/09/25 14:30:20 [notice] 1#1: start worker process 31
+2025/09/25 14:30:20 [notice] 1#1: start worker process 32
+2025/09/25 14:30:20 [notice] 1#1: start worker process 33
+192.168.65.1 - - [25/Sep/2025:14:31:20 +0000] "GET / HTTP/1.1" 404 153 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+2025/09/25 14:31:20 [error] 22#22: *1 "/etc/nginx/html/index.html" is not found (2: No such file or directory), client: 192.168.65.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8088"
+2025/09/25 14:31:20 [error] 22#22: *1 open() "/etc/nginx/html/favicon.ico" failed (2: No such file or directory), client: 192.168.65.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8088", referrer: "http://localhost:8088/"
+192.168.65.1 - - [25/Sep/2025:14:31:20 +0000] "GET /favicon.ico HTTP/1.1" 404 153 "http://localhost:8088/" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+
+- je constate que les logs affichent bien les tentatives de connexion à artir du navigateur.
+
+47, 48, 49.
+[Gas@Arch ~]$ docker container exec -it http6 bash
+root@480856ad5fc4:/# nginx -s reload
+2025/09/25 14:38:34 [notice] 46#46: signal process started
+root@480856ad5fc4:/# exit
+exit
+
+50.
+- lorsque j'essaye de me connecter, un logs apparait pour http6 :
+2025/09/25 14:39:39 [error] 47#47: *3 open() "/etc/nginx/html/favicon.ico" failed (2: No such file or directory), client: 192.168.65.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8086", referrer: "http://localhost:8086/"
+192.168.65.1 - - [25/Sep/2025:14:39:39 +0000] "GET /favicon.ico HTTP/1.1" 404 153 "http://localhost:8086/" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" "-"
+
+
+
+
